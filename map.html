@@ -24,11 +24,41 @@
          </div>
       </div>
    </header>
-  <div id="map"></div>
+  <div id="map">
+    <div id="card" class="active">
+      <div class="cardContents">
+        <div class="close-icon">
+          <span class="cls-icon">
+            <button id="close-icon"><ion-icon name="close-outline"></ion-icon></button>
+          </span>
+        </div>
+        <div class="head">
+          <div class="img-content">
+            <img class="icon-logo" src="https://daisycon.io/images/airline/?width=130&height=70&iata=6e" alt="logo">
+          </div>
+          <div class="plane-names">
+            <h1>Indigo </h1>
+            <h3>AB123</h3>
+          </div>
+        </div>
+        <div class="org-dest">
+          <h2>MAA</h2>
+          <h2>logo</h2>
+          <h2>DEL</h2>
+        </div>
+      </div>
+    </div>
+  </div>
   <script
     src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"
     charset="utf-8"></script>
   <script>
+    const card = document.getElementById("card");
+    const close_icon = document.getElementById("close-icon");
+    const geojson = {
+      'type': 'FeatureCollection',
+      'features': []
+    };
       const key = 'MPTXvKHskAzZTasuqjks';
       const map = new maplibregl.Map({
         container: 'map', // container's id or the HTML element in which MapLibre GL JS will render the map
@@ -37,42 +67,72 @@
         zoom: 1, // starting zoom
       });
       
-      var latitude, longitude;
-      const markArray = [
-        [10.157290, 20.033527],
-        [20.157290, 30.033527],
-        [30.157290, 40.033527],
-        [40.157290, 50.033527],
-        [50.157290, 60.033527],
-        [60.157290, 70.033527]
+      var longitude, latitude;
+      var arr = [
+          [20.157290, 30.033527],
+          [30.157290, 40.033527],
+          [40.157290, 50.033527],
+          [50.157290, 60.033527],
+          [60.157290, 70.033527]
       ]
 
-      function marks(longitude, latitude) {
-        var mark = new maplibregl.Marker({
-          color: "#000",
-          draggable: false
-        }).setLngLat([longitude, latitude]).addTo(map);
-      };
+      for(let i=0; i<arr.length; i++) {
+        longitude = arr[i][0];
+        latitude = arr[i][1];
+        geojson.features.push(passer(longitude, latitude));
+      }
 
-      function LngLatFunc() {
-        for(let i=0; i<markArray.length; i++) {
-          longitude = markArray[i][0];
-          latitude = markArray[i][1];
-          marks(longitude, latitude);
-        };
-      };
+      var feature;
+      function passer(longitude, latitude) {
+        return (
+          feature = {
+            'type': 'Feature',
+            'properties': {
+              'iconSize': [15, 15]
+            },
+            'geometry': {
+              'type': 'Point',
+              'coordinates': [longitude, latitude]
+            }
+          }
+        )
+      }
 
-      LngLatFunc();
+      console.log(geojson)
 
-      var coordinate1 = new maplibregl.Marker({
-         color: "#000",
-         draggable: false
-      }).setLngLat([80.157290, 13.033527]).addTo(map);
+      // add markers to map
+      geojson.features.forEach(function (marker) {
+          // create a DOM element for the marker
+          var el = document.createElement('div');
+          el.className = 'marker';
+          // el.style.backgroundImage ='url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
+          el.style.width = marker.properties.iconSize[0] + 'px';
+          el.style.height = marker.properties.iconSize[1] + 'px';
 
-      var coordinate2 = new maplibregl.Marker({
-         color: "#000",
-         draggable: false
-      }).setLngLat([10.5, 20.5]).addTo(map);
+          el.addEventListener('click', function () {
+            card.classList.remove("active");
+          });
+
+          // add marker to map
+          new maplibregl.Marker(el)
+          .setPopup(new maplibregl.Popup().setHTML("Hello"))
+          .setLngLat(marker.geometry.coordinates)
+          .addTo(map);
+      });
+
+      close_icon.addEventListener('click', () => {
+        card.classList.add("active");
+      })
+
+      //  var coordinate1 = new maplibregl.Marker({
+      //    color: "#000",
+      //    draggable: false
+      // }).setLngLat([80.157290, 13.033527]).addTo(map);
+
+      // var coordinate2 = new maplibregl.Marker({
+      //    color: "#000",
+      //    draggable: false
+      // }).setLngLat([10.5, 20.5]).addTo(map);
       
       // var new_york = new maplibregl.LngLat(-74.0060, 40.7128);
       // var los_angeles = new maplibregl.LngLat(-118.2437, 34.0522);
@@ -82,7 +142,7 @@
       var origin = [c1.lng, c1.lat];
       var destination = [c2.lng, c2.lat];
 
-      //Line from origin to destination
+      //Arc from origin to destination
       var route = {
         'type': 'FeatureCollection',
         'features': [
@@ -100,9 +160,7 @@
       var lineDistance = turf.lineDistance(route.features[0], 'kilometers');
       console.log(lineDistance);
 
-
       var arc = [];
-
       //No. of steps used in the arc like if the steps are more
       //then the line looks smoother.
       var steps = 500;
@@ -112,7 +170,6 @@
         var segment = turf.along(route.features[0], i, 'kilometers');
         arc.push(segment.geometry.coordinates);
       }
-
       route.features[0].geometry.coordinates = arc;
 
       var counter = 0;
@@ -133,8 +190,8 @@
             }
         });
       });
-
-      map.addControl(new maplibregl.NavigationControl(), 'top-right');
   </script>
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 </html>
