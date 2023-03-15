@@ -32,6 +32,8 @@
             <button id="close-icon"><ion-icon name="close-outline"></ion-icon></button>
           </span>
         </div>
+
+        <!-- head -->
         <div class="head">
           <div class="img-content">
             <img class="icon-logo" src="https://daisycon.io/images/airline/?width=130&height=70&iata=6e" alt="logo">
@@ -41,10 +43,79 @@
             <h3>AB123</h3>
           </div>
         </div>
+
+        <!-- origin-destination -->
         <div class="org-dest">
-          <h2>MAA</h2>
-          <h2>logo</h2>
-          <h2>DEL</h2>
+          <div class="org">
+            <h3>Chennai</h3>
+            <h1>MAA</h1>
+            <h3>20:00</h3>
+          </div>
+          <div class="org-dest-logo">
+            <img src="./images/flight-path.png" alt="flightpath">
+          </div>
+          <div class="dest">
+            <h3>Delhi</h3>
+            <h1>DEL</h1>
+            <h3>12:40</h3>
+          </div>
+        </div>
+
+        <div class="card-container">
+          <!-- speed-altitude -->
+          <div class="speed-altitude">
+            <div class="s-a-head">
+              <ion-icon class="speed-icon" name="speedometer-outline"></ion-icon>
+              <h2>Speed & Altitude</h2>
+            </div>
+            <div class="s-a-contents">
+              <div class="hs">
+                <h3>H-Speed:&ensp;</h3> <p style="font-weight: bold;"> 530kts</p>
+              </div>
+              <div class="vs">
+                <h3>V-Speed:&ensp;</h3> <p style="font-weight: bold;"> 0.5</p>
+              </div>
+              <div class="al">
+                <h3>Altitude:&ensp;</h3> <p style="font-weight: bold;"> 500</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- direction -->
+          <div class="direction">
+            <div class="d-head">
+              <ion-icon class="dir-icon" name="compass-outline"></ion-icon>
+              <h2>Direction & Status</h2>
+            </div>
+            <div class="d-contents">
+              <div class="dir">
+                <h3>Direction:&ensp;</h3> <p style="font-weight: bold;"> 270deg</p>
+              </div>
+              <div class="sts">
+                <h3>Status:&ensp;</h3> <p style="font-weight: bold;"> Scheduled</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- latitude & longitude -->
+          <div class="lat-long">
+            <div class="ll-head">
+              <ion-icon class="ll-icon" name="globe-outline"></ion-icon>
+              <h2>Latitude & Longitude</h2>
+            </div>
+            <div class="d-contents">
+              <div class="long">
+                <h3>Longitude:&ensp;</h3> <p style="font-weight: bold;">20.157290</p>
+              </div>
+              <div class="lat">
+                <h3>Latitude:&ensp;</h3> <p style="font-weight: bold;">-9.1345260</p>
+              </div>
+              <div class="squa">
+                <h3>Squawk:&ensp;</h3> <p style="font-weight: bold;">6542</p>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -67,62 +138,98 @@
         zoom: 1, // starting zoom
       });
       
-      var longitude, latitude;
+      var longitude, latitude, rotate, description;
+      var lati, longi, dire, des;
+      let arrayOfObjects = [];
+
       var arr = [
-          [20.157290, 30.033527],
-          [30.157290, 40.033527],
-          [40.157290, 50.033527],
-          [50.157290, 60.033527],
-          [60.157290, 70.033527]
+          [20.157290, 30.033527, 45, "AB123"],
+          [30.157290, 40.033527, 90, "AB123"],
+          [40.157290, 50.033527, 20, "AB123"],
+          [50.157290, 60.033527, 190, "AB123"],
+          [60.157290, 70.033527, 270, "AB123"]
       ]
 
-      for(let i=0; i<arr.length; i++) {
-        longitude = arr[i][0];
-        latitude = arr[i][1];
-        geojson.features.push(passer(longitude, latitude));
-      }
+      console.log(arr)
 
-      var feature;
-      function passer(longitude, latitude) {
-        return (
-          feature = {
-            'type': 'Feature',
-            'properties': {
-              'iconSize': [15, 15]
-            },
-            'geometry': {
-              'type': 'Point',
-              'coordinates': [longitude, latitude]
+      function creategeoJSONobject(data) {
+          for(let i=0; i<arrayOfObjects.length; i++) {
+            if(arrayOfObjects[i][0] == undefined ||
+               arrayOfObjects[i][2] == undefined ||
+               arrayOfObjects[i][3] == undefined ||
+               arrayOfObjects[i][3] == undefined) {
+              i++;
+            } else {
+              longitude = arrayOfObjects[i][0];
+              latitude = arrayOfObjects[i][1];
+              rotate = arrayOfObjects[i][2];
+              flight_iata = arrayOfObjects[i][3];
+              geojson.features.push(passer(longitude, latitude, rotate));
             }
           }
-        )
-      }
-
-      console.log(geojson)
-
-      // add markers to map
-      geojson.features.forEach(function (marker) {
+          
+          function passer(longitude, latitude, rotate) {
+            return (
+              {
+                'type': 'Feature',
+                'properties': {
+                  'iconSize': [35, 35]
+                },
+                'geometry': {
+                  'type': 'Point',
+                  'coordinates': [longitude, latitude],
+                  'rotation': rotate
+                }
+              }
+            )
+          }
+        console.log(geojson)
+        geojson.features.forEach(function (marker) {
           // create a DOM element for the marker
           var el = document.createElement('div');
-          el.className = 'marker';
-          // el.style.backgroundImage ='url(https://placekitten.com/g/' + marker.properties.iconSize.join('/') + '/)';
+          el.className = 'marker'
           el.style.width = marker.properties.iconSize[0] + 'px';
           el.style.height = marker.properties.iconSize[1] + 'px';
-
+          
           el.addEventListener('click', function () {
             card.classList.remove("active");
           });
-
+          
           // add marker to map
-          new maplibregl.Marker(el)
-          .setPopup(new maplibregl.Popup().setHTML("Hello"))
+          var markerIcon = new maplibregl.Marker(el)
           .setLngLat(marker.geometry.coordinates)
           .addTo(map);
-      });
 
-      close_icon.addEventListener('click', () => {
-        card.classList.add("active");
-      })
+          markerIcon.setRotation(marker.geometry.rotation);
+        });
+
+          close_icon.addEventListener('click', () => {
+          card.classList.add("active");
+        })
+      }
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://airlabs.co/api/v9/flights?api_key=3ded0fe9-727b-4ec1-835c-3343dda21a95');
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const data = xhr.response.response;
+          // console.log(data);
+          for(let i=0; i<data.length; i++) {
+            longi = data[i].lng;
+            lati = data[i].lat;
+            dire = data[i].dir;
+            des = data[i].flight_iata;
+            var flight = [`${longi}`,`${lati}`, `${dire}`, `${des}`];
+            arrayOfObjects.push(flight);
+          }
+          console.log(arrayOfObjects);
+        } else {
+          console.log('Unable to load JSON data');
+        }
+        creategeoJSONobject(arrayOfObjects);
+      };
+      xhr.send();
 
       //  var coordinate1 = new maplibregl.Marker({
       //    color: "#000",
