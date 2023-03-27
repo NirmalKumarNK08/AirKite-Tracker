@@ -98,7 +98,7 @@
 
 .plane-names > h1 {
    padding: 10px 10px 10px 20px;
-   font-size: 2.5em;
+   font-size: 2em;
 }
 .plane-names > h3 {
    padding: 10px 10px 10px 20px;
@@ -146,25 +146,27 @@
    justify-content: center;
    align-items: center;
    margin: 0 10px;
+   padding: 0 5px;
 }
 .org-dest-logo > img {
-   height: 90px;
-   width: 90px;
+   height: 50px;
+   width: 50px;
    transform: rotate(45deg);
 }
 
 .org, .dest {
    display: flex;
+   width: 70%;
    flex-direction: column;
    align-items: center;
    border: 1px solid #000;
-   padding: 5px 10px;
+   padding: 5px 5px;
    border-radius: 5px;
    background: #fff;
 }
 
 .dest {
-   padding: 5px 15px;
+   padding: 5px 5px;
 }
 
 .org > h1, .dest > h1 {
@@ -206,7 +208,7 @@
    flex-direction: column;
 }
 
-.hs, .vs, .al, .dir, .sts, .long, .lat, .squa {
+.hs, .vs, .al, .dir, .sts, .long, .lat, .squa, .duration {
    display: flex;
    margin-top: 5px;
    padding: 5px 1.5em;
@@ -214,7 +216,7 @@
    font-size: 1.15em;
 }
 
-.al, .sts, .squa {
+.al, .squa, .duration {
    border-bottom: none;
 }
 

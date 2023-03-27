@@ -7,6 +7,7 @@ const charactersList1 = document.getElementById("charactersList1");
 const org = document.getElementById("origin");
 const destination = document.getElementById("destination");
 
+
 //Based upon the scrolling value the plane moves up.
 window.addEventListener('scroll', () => {
    let value = window.scrollY;
@@ -17,6 +18,28 @@ window.addEventListener('scroll', () => {
 function scrollDown() {
   window.scrollTo(0, 500);
 }
+
+
+// function latLngFunc() {
+//   var lat = -122.420679;
+//   var lng = 37.772537;
+
+//   var form = document.getElementById("b-form");
+
+//   var input = document.createElement("input");
+//   input.setAttribute("type", "hidden");
+//   input.setAttribute("name", "lat");
+//   input.setAttribute("value", lat);
+//   form.appendChild(input);
+
+//   var input1 = document.createElement("input");
+//   input1.setAttribute("type", "hidden");
+//   input1.setAttribute("name", "lng");
+//   input1.setAttribute("value", lng);
+//   form.appendChild(input1);
+
+//   form.submit();
+// }
 
 //To hide the suggessions bar when the input box is empty of cleared
 org.addEventListener("keyup", (e) => {

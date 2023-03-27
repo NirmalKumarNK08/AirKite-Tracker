@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Display a map</title>
+  <title>Map</title>
   <script src="https://cdn.maptiler.com/maplibre-gl-js/v2.4.0/maplibre-gl.js"></script>
   <link href="https://cdn.maptiler.com/maplibre-gl-js/v2.4.0/maplibre-gl.css" rel="stylesheet" />
   <link rel="stylesheet" href="./style/map.css">
@@ -35,29 +35,27 @@
 
         <!-- head -->
         <div class="head">
-          <div class="img-content">
-            <img class="icon-logo" src="https://daisycon.io/images/airline/?width=130&height=70&iata=6e" alt="logo">
-          </div>
+          <div id="id_icon_iata" class="img-content"></div>
           <div class="plane-names">
-            <h1>Indigo </h1>
-            <h3>AB123</h3>
+            <h2 id="id_airline"></h2>
+            <h3 id="id_f_iata"></h3>
           </div>
         </div>
 
         <!-- origin-destination -->
         <div class="org-dest">
           <div class="org">
-            <h3>Chennai</h3>
-            <h1>MAA</h1>
-            <h3>20:00</h3>
+            <h5 id="id_origin"></h5>
+            <h1 id="id_origin_code"></h1>
+            <h5 id="id_departure_time"></h5>
           </div>
           <div class="org-dest-logo">
             <img src="./images/flight-path.png" alt="flightpath">
           </div>
           <div class="dest">
-            <h3>Delhi</h3>
-            <h1>DEL</h1>
-            <h3>12:40</h3>
+            <h5 id="id_destination"></h5>
+            <h1 id="id_destination_code"></h1>
+            <h5 id="id_arrival_time"></h5>
           </div>
         </div>
 
@@ -70,13 +68,13 @@
             </div>
             <div class="s-a-contents">
               <div class="hs">
-                <h3>H-Speed:&ensp;</h3> <p style="font-weight: bold;"> 530kts</p>
+                <h3>H-Speed:&ensp;</h3> <p id="id_speed" style="font-weight: bold;"></p>
               </div>
               <div class="vs">
-                <h3>V-Speed:&ensp;</h3> <p style="font-weight: bold;"> 0.5</p>
+                <h3>V-Speed:&ensp;</h3> <p id="id_vspeed" style="font-weight: bold;"></p>
               </div>
               <div class="al">
-                <h3>Altitude:&ensp;</h3> <p style="font-weight: bold;"> 500</p>
+                <h3>Altitude:&ensp;</h3> <p id="id_altitude" style="font-weight: bold;"></p>
               </div>
             </div>
           </div>
@@ -89,10 +87,13 @@
             </div>
             <div class="d-contents">
               <div class="dir">
-                <h3>Direction:&ensp;</h3> <p style="font-weight: bold;"> 270deg</p>
+                <h3>Direction:&ensp;</h3> <p id="id_direction" style="font-weight: bold;"></p>
               </div>
               <div class="sts">
-                <h3>Status:&ensp;</h3> <p style="font-weight: bold;"> Scheduled</p>
+                <h3>Status:&ensp;</h3> <p id="id_status" style="font-weight: bold;"></p>
+              </div>
+              <div class="duration">
+                <h3>Duration:&ensp;</h3> <p id="id_duration" style="font-weight: bold;"></p>
               </div>
             </div>
           </div>
@@ -105,17 +106,17 @@
             </div>
             <div class="d-contents">
               <div class="long">
-                <h3>Longitude:&ensp;</h3> <p style="font-weight: bold;">20.157290</p>
+                <h3>Longitude:&ensp;</h3> <p id="id_longitude" style="font-weight: bold;"></p>
               </div>
               <div class="lat">
-                <h3>Latitude:&ensp;</h3> <p style="font-weight: bold;">-9.1345260</p>
+                <h3>Latitude:&ensp;</h3> <p id="id_latitude" style="font-weight: bold;"></p>
               </div>
               <div class="squa">
-                <h3>Squawk:&ensp;</h3> <p style="font-weight: bold;">6542</p>
+                <h3>Squawk:&ensp;</h3> <p id="id_squawk" style="font-weight: bold;"></p>
               </div>
             </div>
           </div>
-        </div>
+          </div>
         </div>
       </div>
     </div>
@@ -124,179 +125,163 @@
     src="https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"
     charset="utf-8"></script>
   <script>
+
     const card = document.getElementById("card");
     const close_icon = document.getElementById("close-icon");
+    
+    //Creating empty object for marker properties.
     const geojson = {
       'type': 'FeatureCollection',
       'features': []
     };
-      const key = 'MPTXvKHskAzZTasuqjks';
-      const map = new maplibregl.Map({
-        container: 'map', // container's id or the HTML element in which MapLibre GL JS will render the map
-        style: `https://api.maptiler.com/maps/hybrid/style.json?key=${key}`, // style URL
-        center: [16.62662018, 49.2125578], // starting position [lng, lat]
-        zoom: 1, // starting zoom
-      });
+
+    //Creation of map
+    const key = 'MPTXvKHskAzZTasuqjks';
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: `https://api.maptiler.com/maps/hybrid/style.json?key=${key}`,
+      center: [16.62662018, 49.2125578],
+      zoom: 1,
+      minZoom: 1.4
+    });
+
+    //The demo array which contains demo values.
+    var arr = [
+        [20.157290, 30.033527, 45, "ET148"],
+        [30.157290, 40.033527, 90, "WY664"],
+        [40.157290, 50.033527, 20, "ET315"],
+        [50.157290, 60.033527, 190, null],
+        [60.157290, 70.033527, 270, "FZ631"]
+    ]
+
+    //Looping through the array to get the values.
+    for(let i=0; i<arr.length; i++) {
+        var longitude = arr[i][0];
+        var latitude = arr[i][1];
+        var rotate = arr[i][2];
+        var flight_iata = arr[i][3];
+        geojson.features.push(passer(longitude, latitude, rotate, flight_iata));
+    }
+    
+    //Passer function updates the values into geojson object.
+    function passer(longitude, latitude, rotate, flight_iata) {
+      return (
+        {
+          'type': 'Feature',
+          'properties': {
+            'iconSize': [38, 38],
+            'flight_iata': flight_iata
+          },
+          'geometry': {
+            'type': 'Point',
+            'coordinates': [longitude, latitude],
+            'rotation': rotate
+          }
+        }
+      )
+    }
+    
+    //Adding object to geojson object.
+    geojson.features.forEach((marker) => {
+      // Creating a DOM element for the marker.
+      var el = document.createElement('div');
+      el.className = 'marker'
+
+      el.style.width = marker.properties.iconSize[0] + 'px';
+      el.style.height = marker.properties.iconSize[1] + 'px';
       
-      var longitude, latitude, rotate, description;
-      var lati, longi, dire, des;
-      let arrayOfObjects = [];
-
-      var arr = [
-          [20.157290, 30.033527, 45, "AB123"],
-          [30.157290, 40.033527, 90, "AB123"],
-          [40.157290, 50.033527, 20, "AB123"],
-          [50.157290, 60.033527, 190, "AB123"],
-          [60.157290, 70.033527, 270, "AB123"]
-      ]
-
-      console.log(arr)
-
-      function creategeoJSONobject(data) {
-          for(let i=0; i<arrayOfObjects.length; i++) {
-            if(arrayOfObjects[i][0] == undefined ||
-               arrayOfObjects[i][2] == undefined ||
-               arrayOfObjects[i][3] == undefined ||
-               arrayOfObjects[i][3] == undefined) {
-              i++;
-            } else {
-              longitude = arrayOfObjects[i][0];
-              latitude = arrayOfObjects[i][1];
-              rotate = arrayOfObjects[i][2];
-              flight_iata = arrayOfObjects[i][3];
-              geojson.features.push(passer(longitude, latitude, rotate));
-            }
-          }
-          
-          function passer(longitude, latitude, rotate) {
-            return (
-              {
-                'type': 'Feature',
-                'properties': {
-                  'iconSize': [35, 35]
-                },
-                'geometry': {
-                  'type': 'Point',
-                  'coordinates': [longitude, latitude],
-                  'rotation': rotate
-                }
-              }
-            )
-          }
-        console.log(geojson)
-        geojson.features.forEach(function (marker) {
-          // create a DOM element for the marker
-          var el = document.createElement('div');
-          el.className = 'marker'
-          el.style.width = marker.properties.iconSize[0] + 'px';
-          el.style.height = marker.properties.iconSize[1] + 'px';
-          
-          el.addEventListener('click', function () {
-            card.classList.remove("active");
-          });
-          
-          // add marker to map
-          var markerIcon = new maplibregl.Marker(el)
-          .setLngLat(marker.geometry.coordinates)
-          .addTo(map);
-
-          markerIcon.setRotation(marker.geometry.rotation);
-        });
-
-          close_icon.addEventListener('click', () => {
+      // Adding marker to map.
+      var markerIcon = new maplibregl.Marker(el)
+      .setLngLat(marker.geometry.coordinates)
+      .addTo(map);
+      markerIcon.setRotation(marker.geometry.rotation);
+      
+      //Click function implementation on flight icon.
+      el.addEventListener('click', function () {
+        if (marker.properties.flight_iata == undefined) {
           card.classList.add("active");
-        })
-      }
+          markerIcon.setPopup(new maplibregl.Popup().setHTML("No Data Found!"))
+        } else {
+          var code = marker.properties.flight_iata;
+          ajaxLoader(code);
+          card.classList.remove("active");
+          markerIcon.setPopup(new maplibregl.Popup().setHTML(code));
+        }
+      });
 
+      //Close button function for card.
+      close_icon.addEventListener('click', () => {
+        card.classList.add("active");
+        el.classList.remove("active");
+        el1.classList.add("active");
+      })
+    });
+
+
+    //Ajax method to load the contents into the card
+    function ajaxLoader(code) {
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', 'https://airlabs.co/api/v9/flights?api_key=3ded0fe9-727b-4ec1-835c-3343dda21a95');
+      xhr.open('GET', `https://airlabs.co/api/v9/flight?flight_iata=${code}&api_key=3ded0fe9-727b-4ec1-835c-3343dda21a95`);
       xhr.responseType = 'json';
       xhr.onload = function() {
         if (xhr.status === 200) {
-          const data = xhr.response.response;
-          // console.log(data);
-          for(let i=0; i<data.length; i++) {
-            longi = data[i].lng;
-            lati = data[i].lat;
-            dire = data[i].dir;
-            des = data[i].flight_iata;
-            var flight = [`${longi}`,`${lati}`, `${dire}`, `${des}`];
-            arrayOfObjects.push(flight);
-          }
-          console.log(arrayOfObjects);
+          const data = xhr.response;
+          console.log(data.response);
+
+          //Head
+          document.getElementById("id_icon_iata").innerHTML = `<img class="icon-logo" src="https://daisycon.io/images/airline/?width=130&height=70&iata=${data.response.airline_iata}" alt="logo">`
+          document.getElementById("id_airline").innerText = `${data.response.airline_name}`;
+          document.getElementById("id_f_iata").innerText = `${data.response.flight_iata}`;
+
+          //Origin
+          document.getElementById("id_origin").innerText = `${data.response.dep_city}`;
+          document.getElementById("id_origin_code").innerText = `${data.response.dep_iata}`;
+
+          var dep_time = data.response.dep_time;
+          dep_time = dep_time.substr(11, 15);
+          document.getElementById("id_departure_time").innerText = `${dep_time}`;
+          
+          //Destination
+          document.getElementById("id_destination").innerText = `${data.response.arr_city}`;
+          document.getElementById("id_destination_code").innerText = `${data.response.arr_iata}`;
+
+          var arr_time = data.response.arr_time;
+          arr_time = arr_time.substr(11, 15);
+          document.getElementById("id_arrival_time").innerText = `${arr_time}`;
+        
+          //Speed
+          var speed = document.getElementById("id_speed");
+          data.response.speed == undefined ? speed.innerText = 'N/A' : speed.innerText = `${data.response.speed} kts`;
+          
+          var v_speed =  document.getElementById("id_vspeed");
+          data.response.v_speed == undefined ? v_speed.innerText = 'N/A' : v_speed.innerText = `${data.response.v_speed} kts`;
+          
+          var altitude =  document.getElementById("id_altitude");
+          data.response.alt == undefined ? altitude.innerText = 'N/A' : altitude.innerText = `${data.response.alt}`;
+          
+          //Direction 
+          var direction = document.getElementById("id_direction");
+          data.response.dir == undefined ? direction.innerText = 'N/A' : direction.innerText = `${data.response.dir} °`;
+
+          var status = document.getElementById("id_status");
+          data.response.status == undefined ? status.innerText = 'N/A' : status.style.color = "green", status.innerText = `${data.response.status}`;
+
+          //Longitude & Latitude 
+          var lng = document.getElementById("id_longitude");
+          data.response.lng == undefined ? lng.innerText = 'N/A' : lng.innerText = `${data.response.lng}`;
+
+          var lat = document.getElementById("id_latitude");
+          data.response.lat == undefined ? lat.innerText = 'N/A' : lat.innerText = `${data.response.lat}`;
+
+          var squawk = document.getElementById("id_squawk");
+          data.response.squawk == undefined ? squawk.innerText = 'N/A' : squawk.innerText = `${data.response.squawk}`;
+        
         } else {
           console.log('Unable to load JSON data');
         }
-        creategeoJSONobject(arrayOfObjects);
       };
       xhr.send();
-
-      //  var coordinate1 = new maplibregl.Marker({
-      //    color: "#000",
-      //    draggable: false
-      // }).setLngLat([80.157290, 13.033527]).addTo(map);
-
-      // var coordinate2 = new maplibregl.Marker({
-      //    color: "#000",
-      //    draggable: false
-      // }).setLngLat([10.5, 20.5]).addTo(map);
-      
-      // var new_york = new maplibregl.LngLat(-74.0060, 40.7128);
-      // var los_angeles = new maplibregl.LngLat(-118.2437, 34.0522);
-      var c1 = coordinate1.getLngLat();
-      var c2 = coordinate2.getLngLat();
-
-      var origin = [c1.lng, c1.lat];
-      var destination = [c2.lng, c2.lat];
-
-      //Arc from origin to destination
-      var route = {
-        'type': 'FeatureCollection',
-        'features': [
-          {
-            'type': 'Feature',
-            'geometry': {
-              'type': 'LineString',
-              'coordinates': [origin, destination]
-            }
-          }
-        ]
-      };
-
-      //Distance between two coordinates
-      var lineDistance = turf.lineDistance(route.features[0], 'kilometers');
-      console.log(lineDistance);
-
-      var arc = [];
-      //No. of steps used in the arc like if the steps are more
-      //then the line looks smoother.
-      var steps = 500;
-
-      //Drawing the arc
-      for (var i = 0; i < lineDistance; i += lineDistance / steps) {
-        var segment = turf.along(route.features[0], i, 'kilometers');
-        arc.push(segment.geometry.coordinates);
-      }
-      route.features[0].geometry.coordinates = arc;
-
-      var counter = 0;
-
-      map.on('load', function() {
-        map.addSource('route', {
-            'type': 'geojson',
-            'data': route
-        });
-
-        map.addLayer({
-            'id': 'route',
-            'source': 'route',
-            'type': 'line',
-            'paint': {
-                'line-width': 3,
-                'line-color': '#ffff00'
-            }
-        });
-      });
+    }
   </script>
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

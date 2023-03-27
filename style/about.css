@@ -56,34 +56,61 @@ video {
    filter: blur(3px);
 }
 
-.container-home {
-   height: 70vh;
+.mainBody {
+   height: 75vh;
+   width: 100%;
    display: flex;
-   justify-content: center;
    align-items: center;
-   flex-direction: column;
-   color:rgb(255, 255, 255);
+   justify-content: center;
 }
 
-.container-home .explore-btn {
-   border: 2px solid white;
-   padding: 10px 20px;
-   font-size: 20px;
-   color:rgb(255, 255, 255);
-   background: none;
+.mainBody .container {
    border-radius: 10px;
-   margin-top: 20px;
-   transition: .3s ease-in-out;
-   cursor: pointer;
-   text-decoration: none;
+   background: #ffffffd0;
+   position: relative;
+   padding: 0 5em;
+   height: 70vh;
+   width: 80%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
 }
 
-.container-home .explore-btn:hover {
-   background: rgb(14, 166, 236);
-   border: 2px solid transparent;
+.text {
+   overflow: hidden;
+   width: 85%;
+   height: 50vh;
+   position: absolute;
+   transition: .5s all ease;
+}
+
+.text > p {
+   margin: 0;
+   animation: scroll 20s linear infinite;
+}
+
+@keyframes scroll {
+   0% {
+      transform: translateY(0);
+   }
+
+   100% {
+      transform: translateY(-100%);
+   }
+}
+
+footer {
+   margin: 0;
+   height: 10vh;
+   width: 100%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
    color: #fff;
 }
 
-.container-home .welcome {
-   font-size: 3em;
+.footContent {
+   border-radius: 5px;
+   border: 1px dashed #fff;
+   padding: 10px;
 }
